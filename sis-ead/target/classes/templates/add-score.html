@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout :: main-layout(~{::title}, ~{::section})}">
+<head>
+    <title>Nhập điểm môn học</title>
+</head>
+<body>
+<section class="max-w-4xl mx-auto">
+    <nav class="flex mb-6 text-sm text-gray-500">
+        <a th:href="@{/}" class="hover:text-indigo-600">Trang chủ</a>
+        <span class="mx-2">/</span>
+        <span class="text-gray-800">Nhập điểm</span>
+    </nav>
+
+    <div class="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100">
+        <div class="bg-gradient-to-r from-purple-600 to-indigo-600 px-8 py-6 text-white">
+            <h2 class="text-2xl font-bold flex items-center gap-3">
+                <i class="fas fa-edit"></i> Nhập kết quả học tập
+            </h2>
+            <p class="text-purple-100 mt-1 text-sm">Cập nhật điểm quá trình và điểm thi cuối kỳ</p>
+        </div>
+
+        <form th:action="@{/add-score}" th:object="${score}" method="post" class="p-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+
+                <div class="space-y-6">
+                    <h3 class="text-lg font-semibold text-gray-800 border-b pb-2 mb-4">
+                        1. Thông tin môn học
+                    </h3>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Sinh viên <span class="text-red-500">*</span></label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400"><i class="fas fa-user-graduate"></i></div>
+                            <select th:field="*{student}"
+                                    th:classappend="${#fields.hasErrors('student')} ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-indigo-500'"
+                                    class="pl-10 w-full rounded-lg border px-4 py-3 focus:ring-2 transition shadow-sm bg-white">
+                                <option value="">-- Chọn sinh viên --</option>
+                                <option th:each="s : ${students}" th:value="${s.studentId}" th:text="${s.studentCode + ' - ' + s.fullName}"></option>
+                            </select>
+                        </div>
+                        <p th:if="${#fields.hasErrors('student')}" th:errors="*{student}" class="mt-1 text-xs text-red-600 font-medium"></p>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Môn học <span class="text-red-500">*</span></label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400"><i class="fas fa-book-open"></i></div>
+                            <select th:field="*{subject}"
+                                    th:classappend="${#fields.hasErrors('subject')} ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-indigo-500'"
+                                    class="pl-10 w-full rounded-lg border px-4 py-3 focus:ring-2 transition shadow-sm bg-white">
+                                <option value="">-- Chọn môn học --</option>
+                                <option th:each="sub : ${subjects}" th:value="${sub.subjectId}" th:text="${sub.subjectCode + ' - ' + sub.subjectName + ' (' + sub.credit + ' TC)'}"></option>
+                            </select>
+                        </div>
+                        <p th:if="${#fields.hasErrors('subject')}" th:errors="*{subject}" class="mt-1 text-xs text-red-600 font-medium"></p>
+                    </div>
+                </div>
+
+                <div class="space-y-6">
+                    <h3 class="text-lg font-semibold text-gray-800 border-b pb-2 mb-4">
+                        2. Chi tiết điểm số
+                    </h3>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Quá trình (30%)</label>
+                            <div class="relative">
+                                <input type="number" step="0.1" th:field="*{score1}"
+                                       th:classappend="${#fields.hasErrors('score1')} ? 'border-red-500 text-red-600 focus:ring-red-500' : 'border-gray-300 text-indigo-600 focus:ring-indigo-500'"
+                                       class="w-full text-center text-lg font-bold rounded-lg border px-4 py-3 focus:ring-2 shadow-sm"
+                                       placeholder="0.0">
+                            </div>
+                            <p th:if="${#fields.hasErrors('score1')}" th:errors="*{score1}" class="mt-1 text-xs text-red-600 font-medium text-center"></p>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Cuối kỳ (70%)</label>
+                            <div class="relative">
+                                <input type="number" step="0.1" th:field="*{score2}"
+                                       th:classappend="${#fields.hasErrors('score2')} ? 'border-red-500 text-red-600 focus:ring-red-500' : 'border-gray-300 text-purple-600 focus:ring-purple-500'"
+                                       class="w-full text-center text-lg font-bold rounded-lg border px-4 py-3 focus:ring-2 shadow-sm"
+                                       placeholder="0.0">
+                            </div>
+                            <p th:if="${#fields.hasErrors('score2')}" th:errors="*{score2}" class="mt-1 text-xs text-red-600 font-medium text-center"></p>
+                        </div>
+                    </div>
+
+                    <div class="bg-blue-50 border border-blue-100 rounded-xl p-4 text-sm text-blue-800">
+                        <div class="flex items-start gap-3">
+                            <i class="fas fa-info-circle mt-1 text-blue-500"></i>
+                            <div>
+                                <p class="font-bold mb-1">Công thức tính:</p>
+                                <p>Tổng = (0.3 × Điểm QT) + (0.7 × Điểm CK)</p>
+                                <div class="mt-2 grid grid-cols-4 gap-1 text-xs text-center font-bold text-white">
+                                    <span class="bg-green-500 rounded px-1 py-0.5">A: ≥ 8.5</span>
+                                    <span class="bg-blue-500 rounded px-1 py-0.5">B: ≥ 7.0</span>
+                                    <span class="bg-yellow-500 rounded px-1 py-0.5">C: ≥ 5.5</span>
+                                    <span class="bg-red-500 rounded px-1 py-0.5">F: &lt; 4.0</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex gap-4 pt-8 mt-4 border-t border-gray-100">
+                <button type="submit" class="flex-1 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-bold py-3 rounded-lg shadow-lg transition transform active:scale-95">
+                    <i class="fas fa-save mr-2"></i> Lưu kết quả
+                </button>
+                <a th:href="@{/}" class="px-8 py-3 bg-white border border-gray-300 text-gray-700 font-semibold rounded-lg hover:bg-gray-50 transition shadow-sm flex items-center">
+                    Hủy bỏ
+                </a>
+            </div>
+        </form>
+    </div>
+</section>
+</body>
+</html>

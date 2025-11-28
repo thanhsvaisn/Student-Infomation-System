@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout :: main-layout(~{::title}, ~{::section})}">
+<head>
+    <title>Cập nhật điểm số</title>
+</head>
+<body>
+<section class="max-w-4xl mx-auto">
+    <nav class="flex mb-6 text-sm text-gray-500">
+        <a th:href="@{/}" class="hover:text-indigo-600">Trang chủ</a>
+        <span class="mx-2">/</span>
+        <span class="text-gray-800">Sửa điểm</span>
+    </nav>
+
+    <div class="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100">
+        <div class="bg-gradient-to-r from-teal-500 to-emerald-600 px-8 py-6 text-white">
+            <h2 class="text-2xl font-bold flex items-center gap-3">
+                <i class="fas fa-edit"></i> Chỉnh sửa điểm số
+            </h2>
+            <p class="text-teal-50 mt-1 text-sm">Cập nhật lại kết quả học tập</p>
+        </div>
+
+        <form th:action="@{/edit-score/{id}(id=${score.studentScoreId})}" th:object="${score}" method="post" class="p-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+
+                <div class="space-y-6 opacity-75">
+                    <h3 class="text-lg font-semibold text-gray-800 border-b pb-2 mb-4">1. Thông tin (Hạn chế sửa)</h3>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Sinh viên</label>
+                        <select th:field="*{student}" class="w-full rounded-lg border-gray-300 bg-gray-50 px-4 py-3 shadow-sm pointer-events-none">
+                            <option th:each="s : ${students}" th:value="${s.studentId}" th:text="${s.studentCode + ' - ' + s.fullName}"></option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Môn học</label>
+                        <select th:field="*{subject}" class="w-full rounded-lg border-gray-300 bg-gray-50 px-4 py-3 shadow-sm pointer-events-none">
+                            <option th:each="sub : ${subjects}" th:value="${sub.subjectId}" th:text="${sub.subjectCode + ' - ' + sub.subjectName}"></option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="space-y-6">
+                    <h3 class="text-lg font-semibold text-gray-800 border-b pb-2 mb-4">2. Kết quả mới</h3>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Quá trình (30%)</label>
+                            <input type="number" step="0.1" th:field="*{score1}"
+                                   th:classappend="${#fields.hasErrors('score1')} ? 'border-red-500 text-red-600' : 'border-gray-300 text-teal-600'"
+                                   class="w-full text-center text-lg font-bold rounded-lg border px-4 py-3 focus:ring-2 focus:ring-teal-500 shadow-sm">
+                            <p th:if="${#fields.hasErrors('score1')}" th:errors="*{score1}" class="mt-1 text-xs text-red-600"></p>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Cuối kỳ (70%)</label>
+                            <input type="number" step="0.1" th:field="*{score2}"
+                                   th:classappend="${#fields.hasErrors('score2')} ? 'border-red-500 text-red-600' : 'border-gray-300 text-emerald-600'"
+                                   class="w-full text-center text-lg font-bold rounded-lg border px-4 py-3 focus:ring-2 focus:ring-emerald-500 shadow-sm">
+                            <p th:if="${#fields.hasErrors('score2')}" th:errors="*{score2}" class="mt-1 text-xs text-red-600"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex gap-4 pt-8 mt-4 border-t border-gray-100">
+                <button type="submit" class="flex-1 bg-gradient-to-r from-teal-500 to-emerald-600 hover:from-teal-600 text-white font-bold py-3 rounded-lg shadow-lg transition">
+                    <i class="fas fa-save mr-2"></i> Lưu cập nhật
+                </button>
+                <a th:href="@{/}" class="px-8 py-3 bg-white border border-gray-300 text-gray-700 font-semibold rounded-lg hover:bg-gray-50 transition shadow-sm">
+                    Hủy
+                </a>
+            </div>
+        </form>
+    </div>
+</section>
+</body>
+</html>
